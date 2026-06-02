@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>FlowTask | Smart Task Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f0f4f8 0%, #e6edf4 100%);
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        /* main container */
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* auth card & dashboard */
+        .auth-card, .dashboard {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(0px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+        .auth-card {
+            max-width: 480px;
+            margin: 5vh auto;
+            padding: 2rem 2rem 2.5rem;
+        }
+
+        .dashboard {
+            padding: 1.8rem 2rem 2rem;
+        }
+
+        /* headers & text */
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1E2A3E, #0f2b3f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo span {
+            font-size: 2rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.3rem;
+        }
+
+        label {
+            font-weight: 600;
+            color: #1e2a3e;
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 1.2rem;
+            background: white;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+        }
+
+        button {
+            background: #1e2a3e;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.4rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+        }
+
+        button.primary {
+            background: #2563eb;
+            box-shadow: 0 4px 8px rgba(37,99,235,0.2);
+        }
+
+        button.primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        button.secondary {
+            background: #334155;
+        }
+
+        button.danger {
+            background: #dc2626;
+        }
+
+        button.danger-light {
+            background: #fee2e2;
+            color: #b91c1c;
+            box-shadow: none;
+        }
+
+        button.outline {
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            color: #1e293b;
+        }
+
+        .flex-btns {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.8rem;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.4rem;
+            transition: 0.2s;
+            border: 1px solid #eef2ff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .task-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 18px 30px -12px rgba(0,0,0,0.12);
+        }
+
+        .task-title {
+            font-weight: 800;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .task-status {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.2rem 0.7rem;
+            border-radius: 2rem;
+            background: #e2e8f0;
+        }
+
+        .status-pending { background: #fef9c3; color: #854d0e; }
+        .status-in-progress { background: #dbeafe; color: #1e40af; }
+        .status-completed { background: #dcfce7; color: #166534; }
+
+        .task-desc {
+            color: #334155;
+            margin: 0.8rem 0;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .task-meta {
+            font-size: 0.7rem;
+            color: #5b6e8c;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.6rem;
+            justify-content: flex-end;
+        }
+
+        .card-actions button {
+            width: auto;
+            padding: 0.4rem 1rem;
+            font-size: 0.75rem;
+        }
+
+        .add-task-bar {
+            background: #f8fafc;
+            border-radius: 1.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2edff;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            align-items: flex-end;
+        }
+
+        .add-task-bar input, .add-task-bar select {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .add-task-bar button {
+            width: auto;
+            padding: 0.8rem 1.8rem;
+        }
+
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.8rem;
+            border-bottom: 2px solid #eef2ff;
+            padding-bottom: 1rem;
+        }
+
+        .greeting {
+            font-weight: 600;
+            background: #eef2ff;
+            padding: 0.4rem 1rem;
+            border-radius: 3rem;
+        }
+
+        .logout-btn {
+            background: none;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+            width: auto;
+            padding: 0.5rem 1.2rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: #fefefe;
+            border-radius: 2rem;
+            color: #6c757d;
+        }
+
+        /* modal styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 500px;
+            width: 90%;
+            border-radius: 2rem;
+            padding: 1.8rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 680px) {
+            body {
+                padding: 1rem;
+            }
+            .dashboard {
+                padding: 1.2rem;
+            }
+            .add-task-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .add-task-bar button {
+                width: 100%;
+            }
+        }
+
+        .real-time-badge {
+            background: #10b98120;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container" id="appRoot">
+    <!-- Authentication View -->
+    <div id="authView">
+        <div class="auth-card">
+            <div class="logo">
+                <span>✅📋</span>
+                <h1>FlowTask</h1>
+            </div>
+            <p style="margin-bottom: 1.5rem; color: #475569;">Sign in to manage your tasks seamlessly</p>
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" id="loginEmail" placeholder="user@example.com" value="demo@flowtask.com">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="••••••" value="password123">
+            </div>
+            <button class="primary" id="loginBtn">Login / Signup</button>
+            <p style="margin-top: 1rem; font-size: 0.75rem; text-align: center; color:#6c757d;">Demo: any email & pass > 3 chars → auto account</p>
+        </div>
+    </div>
+
+    <!-- Dashboard (tasks) -->
+    <div id="dashboardView" class="hidden">
+        <div class="dashboard">
+            <div class="user-header">
+                <div>
+                    <h1>📌 TaskFlow</h1>
+                    <div class="real-time-badge" id="realtimeHint">⚡ Real-time sync (local + broadcast)</div>
+                </div>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <span class="greeting" id="userGreeting">User</span>
+                    <button id="logoutBtnDashboard" class="logout-btn">🚪 Logout</button>
+                </div>
+            </div>
+
+            <!-- Add / Edit Task Compact -->
+            <div class="add-task-bar" id="taskFormPanel">
+                <input type="text" id="taskTitleInput" placeholder="Task title ..." style="min-width: 180px;">
+                <input type="text" id="taskDescInput" placeholder="Description (optional)">
+                <select id="taskStatusSelect">
+                    <option value="pending">⏳ Pending</option>
+                    <option value="in-progress">⚙️ In Progress</option>
+                    <option value="completed">✅ Completed</option>
+                </select>
+                <button id="createTaskBtn" class="primary">+ Add Task</button>
+                <button id="cancelEditBtn" class="outline hidden">Cancel</button>
+            </div>
+
+            <!-- Task List Grid -->
+            <div id="tasksContainer">
+                <div class="empty-state" id="loadingTasks">📦 Loading tasks...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal (optional full edit) -->
+<div id="editModal" class="modal hidden">
+    <div class="modal-content">
+        <h3 style="margin-bottom: 1rem;">✏️ Edit Task</h3>
+        <input type="text" id="editTaskId" hidden>
+        <div class="input-group"><label>Title</label><input id="editTitle" placeholder="Title"></div>
+        <div class="input-group"><label>Description</label><textarea id="editDesc" rows="2" placeholder="Description"></textarea></div>
+        <div class="input-group"><label>Status</label><select id="editStatus"><option value="pending">Pending</option><option value="in-progress">In Progress</option><option value="completed">Completed</option></select></div>
+        <div class="flex-btns"><button id="saveEditBtn" class="primary">Save</button><button id="closeModalBtn" class="outline">Cancel</button></div>
+    </div>
+</div>
+
+<script>
+    // ------------------------------
+    // Mock backend with localStorage + realtime event simulation (BroadcastChannel)
+    // Provides: Auth (token/user), Full CRUD, realtime sync across tabs/windows
+    // ------------------------------
+    
+    const STORAGE_USERS = "flowtask_users";
+    const STORAGE_SESSIONS = "flowtask_session";
+    const TASKS_PREFIX = "flowtask_tasks_";
+    
+    // Helper: get current logged user
+    function getCurrentUser() {
+        const session = localStorage.getItem(STORAGE_SESSIONS);
+        if (!session) return null;
+        try {
+            const { userId, email } = JSON.parse(session);
+            if (userId && email) return { id: userId, email };
+        } catch(e) {}
+        return null;
+    }
+    
+    // get user tasks
+    function getUserTasks(userId) {
+        const key = TASKS_PREFIX + userId;
+        const raw = localStorage.getItem(key);
+        if (!raw) return [];
+        try {
+            return JSON.parse(raw);
+        } catch(e) { return []; }
+    }
+    
+    // save user tasks
+    function saveUserTasks(userId, tasks) {
+        const key = TASKS_PREFIX + userId;
+        localStorage.setItem(key, JSON.stringify(tasks));
+        // dispatch realtime event using BroadcastChannel (cross-tab / realtime simulation)
+        const channel = new BroadcastChannel('task_realtime');
+        channel.postMessage({ type: 'TASKS_UPDATED', userId, tasks: tasks });
+        channel.close();
+        // also dispatch custom event within same window
+        window.dispatchEvent(new CustomEvent('tasks-updated', { detail: { userId } }));
+    }
+    
+    // CRUD ops
+    function createTask(userId, { title, description, status }) {
+        if (!title.trim()) throw new Error("Title required");
+        const tasks = getUserTasks(userId);
+        const newTask = {
+            id: Date.now() + Math.random().toString(36).substr(2, 6),
+            title: title.trim(),
+            description: description?.trim() || "",
+            status: status || "pending",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+        tasks.unshift(newTask);
+        saveUserTasks(userId, tasks);
+        return newTask;
+    }
+    
+    function updateTask(userId, taskId, updates) {
+        let tasks = getUserTasks(userId);
+        const index = tasks.findIndex(t => t.id == taskId);
+        if (index === -1) throw new Error("Task not found");
+        tasks[index] = { ...tasks[index], ...updates, updatedAt: new Date().toISOString() };
+        saveUserTasks(userId, tasks);
+        return tasks[index];
+    }
+    
+    function deleteTask(userId, taskId) {
+        let tasks = getUserTasks(userId);
+        const filtered = tasks.filter(t => t.id != taskId);
+        if (filtered.length === tasks.length) throw new Error("Task not found");
+        saveUserTasks(userId, filtered);
+        return true;
+    }
+    
+    // Authentication (simple)
+    function registerOrLogin(email, password) {
+        if (!email || !password || password.length < 3) throw new Error("Invalid credentials (min 3 chars password)");
+        let users = JSON.parse(localStorage.getItem(STORAGE_USERS) || "[]");
+        let user = users.find(u => u.email === email);
+        if (!user) {
+            // auto-register
+            const newUser = { id: "user_" + Date.now(), email: email, password: password };
+            users.push(newUser);
+            localStorage.setItem(STORAGE_USERS, JSON.stringify(users));
+            user = newUser;
+        } else {
+            if (user.password !== password) throw new Error("Wrong password");
+        }
+        // create session
+        const session = { userId: user.id, email: user.email, loginTime: Date.now() };
+        localStorage.setItem(STORAGE_SESSIONS, JSON.stringify(session));
+        return session;
+    }
+    
+    function logoutUser() {
+        localStorage.removeItem(STORAGE_SESSIONS);
+    }
+    
+    // Global UI state & listeners
+    let currentUser = null;
+    let tasksList = [];
+    
+    // DOM elements
+    const authView = document.getElementById('authView');
+    const dashboardView = document.getElementById('dashboardView');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPassword = document.getElementById('loginPassword');
+    const logoutDash = document.getElementById('logoutBtnDashboard');
+    const tasksContainer = document.getElementById('tasksContainer');
+    const createTaskBtn = document.getElementById('createTaskBtn');
+    const taskTitleInput = document.getElementById('taskTitleInput');
+    const taskDescInput = document.getElementById('taskDescInput');
+    const taskStatusSelect = document.getElementById('taskStatusSelect');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const userGreetingSpan = document.getElementById('userGreeting');
+    const editModal = document.getElementById('editModal');
+    const editTitle = document.getElementById('editTitle');
+    const editDesc = document.getElementById('editDesc');
+    const editStatus = document.getElementById('editStatus');
+    const saveEditBtn = document.getElementById('saveEditBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    let editingTaskId = null;   // for inline mode (optional we use modal primarily)
+    
+    // render tasks
+    function renderTasks() {
+        if (!currentUser) return;
+        tasksList = getUserTasks(currentUser.id);
+        if (tasksList.length === 0) {
+            tasksContainer.innerHTML = `<div class="empty-state">✨ No tasks yet. Create your first task above! ✨</div>`;
+            return;
+        }
+        const tasksHtml = tasksList.map(task => {
+            let statusClass = '';
+            if (task.status === 'pending') statusClass = 'status-pending';
+            else if (task.status === 'in-progress') statusClass = 'status-in-progress';
+            else statusClass = 'status-completed';
+            const statusLabel = task.status === 'pending' ? 'Pending' : (task.status === 'in-progress' ? 'In Progress' : 'Completed');
+            return `
+                <div class="task-card" data-task-id="${task.id}">
+                    <div class="task-title">
+                        <span>${escapeHtml(task.title)}</span>
+                        <span class="task-status ${statusClass}">${statusLabel}</span>
+                    </div>
+                    <div class="task-desc">${escapeHtml(task.description) || '📝 No description'}</div>
+                    <div class="task-meta">
+                        <span>🕒 ${new Date(task.updatedAt).toLocaleDateString()}</span>
+                        <span>#${task.id.slice(-4)}</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="outline edit-task-btn" data-id="${task.id}" style="background:#eef2ff;">✏️ Edit</button>
+                        <button class="danger-light delete-task-btn" data-id="${task.id}">🗑️ Delete</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        tasksContainer.innerHTML = `<div class="task-grid">${tasksHtml}</div>`;
+        // attach event listeners for edit/delete
+        document.querySelectorAll('.edit-task-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = btn.getAttribute('data-id');
+                openEditModal(id);
+            });
+        });
+        document.querySelectorAll('.delete-task-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = btn.getAttribute('data-id');
+                if (confirm('Delete this task permanently?')) {
+                    try {
+                        deleteTask(currentUser.id, id);
+                        renderTasks();
+                        showToast('Task deleted', '#dc2626');
+                    } catch(err) { alert(err.message); }
+                }
+            });
+        });
+    }
+    
+    function openEditModal(taskId) {
+        const task = tasksList.find(t => t.id == taskId);
+        if (!task) return;
+        document.getElementById('editTaskId').value = task.id;
+        editTitle.value = task.title;
+        editDesc.value = task.description;
+        editStatus.value = task.status;
+        editModal.classList.remove('hidden');
+    }
+    
+    function closeModal() {
+        editModal.classList.add('hidden');
+    }
+    
+    function saveEdit() {
+        const taskId = document.getElementById('editTaskId').value;
+        const newTitle = editTitle.value.trim();
+        if (!newTitle) { alert("Title required"); return; }
+        try {
+            updateTask(currentUser.id, taskId, {
+                title: newTitle,
+                description: editDesc.value,
+                status: editStatus.value
+            });
+            renderTasks();
+            closeModal();
+            showToast('Task updated', '#2563eb');
+        } catch(err) { alert(err.message); }
+    }
+    
+    function createNewTask() {
+        const title = taskTitleInput.value.trim();
+        if (!title) { alert("Please enter task title"); return; }
+        const description = taskDescInput.value.trim();
+        const status = taskStatusSelect.value;
+        try {
+            createTask(currentUser.id, { title, description, status });
+            taskTitleInput.value = '';
+            taskDescInput.value = '';
+            taskStatusSelect.value = 'pending';
+            renderTasks();
+            showToast('Task created!', '#10b981');
+        } catch(err) { alert(err.message); }
+    }
+    
+    // real-time cross-tab sync
+    function setupRealtimeSync() {
+        const channel = new BroadcastChannel('task_realtime');
+        channel.onmessage = (event) => {
+            const { type, userId, tasks } = event.data;
+            if (type === 'TASKS_UPDATED' && currentUser && userId === currentUser.id) {
+                // refresh from localStorage
+                renderTasks();
+                showToast('🔄 Real-time update from another tab', '#3b82f6');
+            }
+        };
+        window.addEventListener('tasks-updated', (e) => {
+            if (currentUser && e.detail.userId === currentUser.id) renderTasks();
+        });
+    }
+    
+    function showToast(msg, bgColor = '#1f2937') {
+        let toast = document.createElement('div');
+        toast.innerText = msg;
+        toast.style.position = 'fixed';
+        toast.style.bottom = '20px';
+        toast.style.left = '50%';
+        toast.style.transform = 'translateX(-50%)';
+        toast.style.backgroundColor = bgColor;
+        toast.style.color = 'white';
+        toast.style.padding = '10px 20px';
+        toast.style.borderRadius = '40px';
+        toast.style.fontSize = '0.85rem';
+        toast.style.fontWeight = '500';
+        toast.style.zIndex = '9999';
+        toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2200);
+    }
+    
+    // escape HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+    
+    // login flow
+    function handleLogin() {
+        const email = loginEmail.value.trim();
+        const password = loginPassword.value.trim();
+        if (!email || !password) {
+            alert("Enter email and password");
+            return;
+        }
+        try {
+            const session = registerOrLogin(email, password);
+            currentUser = { id: session.userId, email: session.email };
+            userGreetingSpan.innerText = `👋 ${session.email.split('@')[0]}`;
+            showDashboard();
+            renderTasks();
+            showToast(`Welcome ${session.email}`, '#1e2a3e');
+        } catch(err) {
+            alert("Authentication error: " + err.message);
+        }
+    }
+    
+    function showDashboard() {
+        authView.classList.add('hidden');
+        dashboardView.classList.remove('hidden');
+    }
+    
+    function handleLogout() {
+        logoutUser();
+        currentUser = null;
+        authView.classList.remove('hidden');
+        dashboardView.classList.add('hidden');
+        tasksContainer.innerHTML = '';
+        // clear form
+        taskTitleInput.value = '';
+        taskDescInput.value = '';
+        showToast("Logged out", '#4b5563');
+    }
+    
+    // check session on load
+    function initAuth() {
+        const sessionUser = getCurrentUser();
+        if (sessionUser) {
+            currentUser = sessionUser;
+            userGreetingSpan.innerText = `👋 ${sessionUser.email.split('@')[0]}`;
+            showDashboard();
+            renderTasks();
+        } else {
+            authView.classList.remove('hidden');
+            dashboardView.classList.add('hidden');
+        }
+        setupRealtimeSync();
+    }
+    
+    // event listeners
+    loginBtn.addEventListener('click', handleLogin);
+    logoutDash.addEventListener('click', handleLogout);
+    createTaskBtn.addEventListener('click', createNewTask);
+    saveEditBtn.addEventListener('click', saveEdit);
+    closeModalBtn.addEventListener('click', closeModal);
+    // optional cancel edit inline (hide)
+    cancelEditBtn?.addEventListener('click', () => {
+        editingTaskId = null;
+        taskTitleInput.value = '';
+        taskDescInput.value = '';
+        taskStatusSelect.value = 'pending';
+        createTaskBtn.classList.remove('hidden');
+        cancelEditBtn.classList.add('hidden');
+    });
+    // pressing enter on login
+    const handleKey = (e) => { if(e.key === 'Enter') handleLogin(); };
+    loginPassword.addEventListener('keypress', handleKey);
+    loginEmail.addEventListener('keypress', handleKey);
+    
+    // close modal background click
+    window.addEventListener('click', (e) => {
+        if (e.target === editModal) closeModal();
+    });
+    
+    initAuth();
+</script>
+</body>
+</html>
