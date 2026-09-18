@@ -1,36 +1,41 @@
 <div align="center">
 
-# 🚀 Task Management App
+  <h1>🚀 Task Management App</h1>
 
-A modern, feature-rich task management application designed to help you organize workflows, track project progress, and boost daily productivity.
+  <p>
+    <b>A modern, feature-rich application designed to streamline your workflow and boost daily productivity.</b>
+  </p>
 
-[Features](#-features) • [Getting Started](#-getting-started) • [Usage](#-usage) • [Contributing](#-contributing)
+  <!-- Badges -->
+  <p>
+    <a href="https://github.com/Sukesh-r-dev/Task-management-app/stargazers">
+      <img src="https://img.shields.io/github/stars/Sukesh-r-dev/Task-management-app?style=for-the-badge&color=brightgreen" alt="Stars" />
+    </a>
+    <a href="https://github.com/Sukesh-r-dev/Task-management-app/issues">
+      <img src="https://img.shields.io/github/issues/Sukesh-r-dev/Task-management-app?style=for-the-badge&color=important" alt="Issues" />
+    </a>
+    <a href="https://github.com/Sukesh-r-dev/Task-management-app/network/members">
+      <img src="https://img.shields.io/github/forks/Sukesh-r-dev/Task-management-app?style=for-the-badge&color=blue" alt="Forks" />
+    </a>
+    <a href="https://github.com/Sukesh-r-dev/Task-management-app/blob/main/LICENSE">
+      <img src="https://img.shields.io/github/license/Sukesh-r-dev/Task-management-app?style=for-the-badge&color=informational" alt="License" />
+    </a>
+  </p>
+
+  <p>
+    <a href="#-features">Features</a> •
+    <a href="#-tech-stack">Tech Stack</a> •
+    <a href="#-getting-started">Getting Started</a> •
+    <a href="#-contributing">Contributing</a> •
+    <a href="#-license">License</a>
+  </p>
+
+  <br />
 
 </div>
 
 ---
 
-## ✨ Features
+## 📌 Preview
 
-- **Task Creation & Management:** Easily add, edit, and delete tasks with custom titles, descriptions, and due dates.
-- **Priority Levels:** Assign priorities to focus on what matters most.
-- **Status Tracking:** Keep track of your tasks from start to completion.
-- **Responsive Design:** Optimized for a seamless experience across desktop, tablet, and mobile devices.
-
----
-
-## 🛠️ Getting Started
-
-Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
-
-### Prerequisites
-
-Ensure you have the following installed:
-- [Node.js](https://nodejs.org/) (v14 or higher recommended)
-- Git
-
-### Installation
-
-1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/Sukesh-r-dev/Task-management-app.git](https://github.com/Sukesh-r-dev/Task-management-app.git)
+*(Add a screenshot or animated GIF of your application running here!)*
